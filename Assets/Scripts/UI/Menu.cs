@@ -7,14 +7,22 @@ using UnityEngine;
 
 public class Menu : MonoBehaviour
 {
+    #region Variables
+    [Header("Audio")]
     private float masterVol;
     public AudioMixer masterAudio;
     public bool muted;
+    [Header("Visual")]
     public bool isFullScreen;
+    public Resolution[] resolutions;
+    public Dropdown resolution;
+    #endregion
+    //function that allows the user to move between scenes
     public void ChangeScene(int sceneIndex)
     {
         SceneManager.LoadScene(sceneIndex);
     }
+    //function that allows the user to quit the application
     public void QuitGame()
     {
 #if UNITY_EDITOR
@@ -22,14 +30,18 @@ public class Menu : MonoBehaviour
 #endif
         Application.Quit();
     }
+    #region Audio
+    //function that controls master volume
     public void ChangeMaster(float volume)
     {
         masterVol = volume;
+        //only changes volume if not muted
         if (!muted)
         {
             masterAudio.SetFloat("mastervol", volume);
         }
     }
+    //function that controls music volume
     public void ChangeMusic(float volume)
     {
         if (!muted)
@@ -37,6 +49,7 @@ public class Menu : MonoBehaviour
             masterAudio.SetFloat("musicvol", volume);
         }
     }
+    //function that controls sound effect volume
     public void ChangeSounds(float volume)
     {
         if (!muted)
@@ -44,6 +57,7 @@ public class Menu : MonoBehaviour
             masterAudio.SetFloat("soundvol", volume);
         }
     }
+    //allows for volume to be toggled on/off
     public void ToggleMute(bool isMuted)
     {
         muted = isMuted;
@@ -57,18 +71,21 @@ public class Menu : MonoBehaviour
             masterAudio.SetFloat("mastervol", masterVol);
         }
     }
+    #endregion
+    #region Visual
+    //function that allows the user to change the graphics quality
     public void Quality(int qualityIndex)
     {
         QualitySettings.SetQualityLevel(qualityIndex);
     }
+    //function that allows for fullscreen to be toggled on/off
     public void SetFullScreen(bool isFullScreen)
     {
         Screen.fullScreen = isFullScreen;
     }
-    public Resolution[] resolutions;
-    public Dropdown resolution;
     private void Start()
     {
+        //sets up the resolution options
         resolutions = Screen.resolutions;
         resolution.ClearOptions();
         List<string> options = new List<string>();
@@ -86,9 +103,11 @@ public class Menu : MonoBehaviour
         resolution.value = currentResolutionIndex;
         resolution.RefreshShownValue();
     }
+    //function that allows for game resolution to be changed
     public void SetResolution(int resolutionIndex)
     {
         Resolution res = resolutions[resolutionIndex];
         Screen.SetResolution(res.width, res.height, Screen.fullScreen);
     }
+    #endregion
 }
